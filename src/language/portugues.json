@@ -8,6 +8,24 @@
         "title2": "Atendimento, clientes" 
     },
     "dashboard": {
-        
+        "createTicket": "Abrir chamado",
+        "client":"CLIENTE",
+        "date_registration": "DATA CADASTRO",
+        "status": "STATUS",
+        "actions": "#",
+        "my_clients": "Meus Clientes",
+        "new_client": "Novo cliente",
+        "header": {
+            "callings": "Chamados",
+            "clients": "Clientes"
+        },
+        "customer":{
+            "card": {
+                "name": "Nome:",
+                "email": "Email:",
+                "phone": "Telefone:",
+                "delete": "Deletar"
+            }
+        }
     }
 }
