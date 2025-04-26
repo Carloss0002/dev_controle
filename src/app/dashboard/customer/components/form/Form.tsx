@@ -4,6 +4,8 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import {zodResolver} from '@hookform/resolvers/zod'
 import { Input } from '@/components/input/FormInput'
+import api from '@/lib/api'
+import { useRouter } from 'next/router'
 
 const schema = z.object({
     name: z.string().min(1, "O campo nome é obrigatório"),
@@ -18,18 +20,28 @@ const schema = z.object({
     }, {
         message: "O número de telefone deve estar DDD (DD) 999999999"
     }),
-    addres: z.string()
+    address: z.string()
 })
 
 type FormData = z.infer<typeof schema>
 
-export function NewCustomerForm(){
+export function NewCustomerForm({userId}: {userId: string}){
     const { register, handleSubmit, formState: {errors}} = useForm<FormData>({
         resolver: zodResolver(schema)
     })
 
-    function handleRegisterCustomer(data: FormData){
-        console.log(data)
+    const router  = useRouter()
+
+    async function handleRegisterCustomer(data: FormData){
+        const response = await api.post("/api/customer", {
+            name: data.name,
+            phone: data.phone,
+            email: data.email,
+            userId,
+            address: data.address
+        });
+        router.replace('/dashboard/customer')
+        console.log(response.data);
     }
     return (
         <form className='flex flex-col mt-6' onSubmit={handleSubmit(handleRegisterCustomer)}>
@@ -40,7 +52,7 @@ export function NewCustomerForm(){
                 {...register("name")}
                 error={errors.name?.message}
             />
-            <div className="flex gap-2 mt-2 flex-col sm:flex-row">
+            <div className="flex gap-2 mt-6 flex-col sm:flex-row">
                 <div className='flex-1 flex-col'>
                     <label htmlFor='phone' className="mb-1 text-lg font-medium">Telefone</label>
                     <Input
@@ -61,6 +73,16 @@ export function NewCustomerForm(){
                         id='email'
                     />
                 </div>
+            </div>
+            <div className='flex-1 mt-6'>
+                <label htmlFor='address' className="mb-1 text-lg font-medium">Endereço completo</label>
+                <Input
+                    type='text'
+                    placeholder='Digite o endereço do cliente'
+                    {...register("address")}
+                    error={errors.address?.message}
+                    id='address'
+                />
             </div>
             <button type='submit' className='bg-blue-500 my-4 px-2 h-11 rounded text-white font-bold'>
                 Cadastrar
