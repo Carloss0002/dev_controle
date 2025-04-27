@@ -5,7 +5,7 @@ import { z } from 'zod'
 import {zodResolver} from '@hookform/resolvers/zod'
 import { Input } from '@/components/input/FormInput'
 import api from '@/lib/api'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 
 const schema = z.object({
     name: z.string().min(1, "O campo nome é obrigatório"),
@@ -40,6 +40,7 @@ export function NewCustomerForm({userId}: {userId: string}){
             userId,
             address: data.address
         });
+        router.refresh()
         router.replace('/dashboard/customer')
         console.log(response.data);
     }

@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth'
 import { redirect } from "next/navigation";
 import { NewCustomerForm } from '../components/form/Form'
 import Link from "next/link";
+import { Suspense } from "react";
 
 
 export default async function NewCustomer(){
@@ -21,8 +22,9 @@ export default async function NewCustomer(){
                     </Link>
                     <h1 className="text-3xl font-bold">Novo Cliente</h1>
                 </div>
-
-                <NewCustomerForm userId={session.user.id}/>
+                <Suspense fallback={<div>Carregando formulário de clientes...</div>}>
+                    <NewCustomerForm userId={session.user.id}/>
+                </Suspense>
             </main>
         </Container>
     )
