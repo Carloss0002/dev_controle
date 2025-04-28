@@ -2,6 +2,13 @@ import {NextRequest, NextResponse} from 'next/server'
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { Params } from 'next/dist/server/request/params';
+
+type Context = {
+    params: {
+      id: string
+    }
+}
 
 export async function POST(request: Request){
     const session = await getServerSession(authOptions)
@@ -50,5 +57,42 @@ export async function GET(req: NextRequest){
     } catch (error) {
         console.error('Erro no GET /api/customer:', error)
         return NextResponse.json({message: "failed find customer"}, {status: 400})
+    }
+}
+
+export async function DELETE(req: NextRequest){
+    const session = await getServerSession(authOptions)
+
+    if (!session || !session.user){
+        return NextResponse.json({error: "Not authorized"}, {status: 401})
+    }
+
+    const { searchParams } = new URL(req.url)
+    const CustomerId = searchParams.get('id')
+
+    if (!CustomerId){
+        return NextResponse.json({error: "Not authorized"}, {status: 401})
+    }
+
+    const findTicket = await prisma.ticket.findFirst({
+        where: {
+            customerId: CustomerId
+        }
+    })
+
+    if(findTicket){
+        return NextResponse.json({error: "Failed delete customer"}, {status: 400})
+    }
+
+    try {
+        await prisma.customer.delete({
+            where: {
+                id: CustomerId
+            }
+        })
+
+        return NextResponse.json({message: "Card deletado com sucesso"}, {status: 200})
+    } catch (error) {
+        return NextResponse.json({message: "failed delete card"}, {status: 400})
     }
 }
