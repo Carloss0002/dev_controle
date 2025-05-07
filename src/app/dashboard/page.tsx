@@ -6,6 +6,7 @@ import { TicketItem } from "./components/tickets/Tickets"
 import {dashboard} from '@/language/portugues.json'
 
 import Link from "next/link"
+import prisma from "@/lib/prisma"
 
 export default async function Dashboard(){
     const session = await getServerSession(authOptions)
@@ -14,6 +15,17 @@ export default async function Dashboard(){
         redirect("/")
     }
     
+    const tickets = await prisma.ticket.findMany({
+        where: {
+            userId: session.user.id
+        },
+        include: {
+            customer: true
+        }
+    })
+
+    console.log(tickets)
+
     return (
         <Container>
             <div className="flex items-center justify-between">
@@ -32,8 +44,11 @@ export default async function Dashboard(){
                     </tr>
                 </thead>
                 <tbody>
-                    <TicketItem/>
-                    <TicketItem/>
+                    {
+                        tickets.map(ticket => (
+                            <TicketItem key={ticket.id} ticket={ticket} customer={ticket.customer}/>
+                        ))
+                    }
                 </tbody>
             </table>
         </Container>
