@@ -8,12 +8,19 @@ import { ModalTicket } from '@/components/modal/modalComponent';
 interface ModalContextData{
     visible: boolean;
     handleModalVisible: () => void;
+    ticket: TicketInfo | undefined;
+}
+
+interface TicketInfo {
+    ticket: TicketProps;
+    customer: CustomerInterface | null;
 }
 
 export const ModalContext = createContext({} as ModalContextData)
 
 export const ModalProvider = ({children}:{children:ReactNode})=>{
-    const [visible, setVisible] = useState<boolean>(true)
+    const [visible, setVisible] = useState<boolean>(false)
+    const [ticket, setTicket] = useState<TicketInfo>()
 
     function handleModalVisible(){
         setVisible(visible => !visible)
@@ -22,7 +29,8 @@ export const ModalProvider = ({children}:{children:ReactNode})=>{
         <ModalContext.Provider
             value={{
                 visible,
-                handleModalVisible
+                handleModalVisible,
+                ticket
             }}
         >
             {visible && <ModalTicket/>}
