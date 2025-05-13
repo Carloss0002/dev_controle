@@ -3,8 +3,11 @@
 import { TicketProps } from "@/utils/ticket.type";
 import { CustomerInterface } from "@/utils/customer.type";
 import { FiCheckSquare, FiFile } from "react-icons/fi";
-import api from "@/lib/api";
 import { useRouter } from 'next/navigation'
+import { useContext } from 'react'
+
+import api from "@/lib/api";
+import { ModalContext } from "@/providers/modal";
 
 interface TicketItemProps {
     ticket: TicketProps;
@@ -13,6 +16,7 @@ interface TicketItemProps {
 
 export function TicketItem({ticket, customer}:TicketItemProps){
     const router = useRouter()
+    const { handleModalVisible, setDetailTicketInfo } = useContext(ModalContext)
 
     async function handleChangeStatus(){
         try {
@@ -26,6 +30,13 @@ export function TicketItem({ticket, customer}:TicketItemProps){
         }
     }
 
+    function handleOpenModal(){
+        handleModalVisible()
+        setDetailTicketInfo({
+            customer,
+            ticket
+        })
+    }
     return (
         <>
             <tr className="border-b-2 border-b-slate-200 h-16 last:border-b-0 bg-slate-50 hover:bg-gray-200">
@@ -40,7 +51,7 @@ export function TicketItem({ticket, customer}:TicketItemProps){
                     <button className="mr-3" onClick={handleChangeStatus}>
                         <FiCheckSquare size={24} color="#5dc91e"/>
                     </button>
-                    <button>
+                    <button onClick={handleOpenModal}>
                         <FiFile size={24} color="#3b82f6"/>
                     </button>
                 </td>
